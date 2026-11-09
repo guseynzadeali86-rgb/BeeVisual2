@@ -1,0 +1,37 @@
+name: Build BeeVisual.exe
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '21' }
+      - uses: gradle/actions/setup-gradle@v4
+        with: { gradle-version: '8.12' }
+      - name: Build client mod
+        working-directory: BeeVisual_client
+        run: gradle build
+      - name: Copy jar into launcher
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force launcher_app/mods | Out-Null
+          Get-ChildItem BeeVisual_client/build/libs/beevisual-*.jar | Where-Object { $_.Name -notmatch 'sources|dev' } | Copy-Item -Destination launcher_app/mods
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - name: Build exe
+        working-directory: launcher_app
+        shell: pwsh
+        run: |
+          pip install -r requirements.txt pyinstaller
+          pyinstaller --noconsole --onefile --name BeeVisual --icon assets/logo/icon.ico --add-data "assets;assets" --add-data "mods;mods" main.py
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: BeeVisual ${{ github.run_number }}
+          files: launcher_app/dist/BeeVisual.exe
