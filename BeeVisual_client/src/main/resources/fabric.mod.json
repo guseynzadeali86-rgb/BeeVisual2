@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "beevisual",
+  "version": "${version}",
+  "name": "BeeVisual",
+  "description": "BeeVisual - визуальный клиент: HUD, частицы, погода и снег.",
+  "authors": ["BeeVisual"],
+  "license": "All-Rights-Reserved",
+  "icon": "assets/beevisual/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["dev.beevisual.BeeVisual"]
+  },
+  "mixins": [
+    { "config": "beevisual.mixins.json", "environment": "client" }
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21.4",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}

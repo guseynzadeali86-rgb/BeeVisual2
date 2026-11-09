@@ -1,0 +1,2 @@
+PySide6>=6.6
+minecraft-launcher-lib>=7.0
